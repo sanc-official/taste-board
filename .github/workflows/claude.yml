@@ -1,0 +1,55 @@
+name: Claude
+
+# ============================================================
+# コスト最小設計（クレジット枠内に収めるための共通テンプレート）
+# ------------------------------------------------------------
+# 1. push では一切起動しない。Issue/PR で「@claude」とメンション
+#    したときだけ動く（暴発させない＝無駄な消費をしない）。
+# 2. fetch-depth: 1 でチェックアウトを軽く。
+# 3. model を sonnet 固定 ＋ --max-turns で往復上限（消費上限）。
+# 4. 認証は CLAUDE_CODE_OAUTH_TOKEN を使用 → API 従量課金ではなく
+#    サブスクの月次クレジットで消費。ANTHROPIC_API_KEY は使わない。
+#
+# 注: concurrency(cancel-in-progress) は入れない。Claude の進捗
+# コメントが issue_comment を発火させ、本命の実行を巻き添えで
+# キャンセルしてしまうため。@claude を含まない実行は skip され、
+# クレジットは消費しない。
+# ============================================================
+
+on:
+  issue_comment:
+    types: [created]
+  pull_request_review_comment:
+    types: [created]
+  pull_request_review:
+    types: [submitted]
+  issues:
+    types: [opened]
+
+jobs:
+  claude:
+    if: |
+      (github.event_name == 'issue_comment' && contains(github.event.comment.body, '@claude')) ||
+      (github.event_name == 'pull_request_review_comment' && contains(github.event.comment.body, '@claude')) ||
+      (github.event_name == 'pull_request_review' && contains(github.event.review.body, '@claude')) ||
+      (github.event_name == 'issues' && contains(github.event.issue.body, '@claude'))
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+      pull-requests: read
+      issues: read
+      id-token: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Run Claude
+        uses: anthropics/claude-code-action@v1
+        with:
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          claude_args: |
+            --model claude-sonnet-4-6
+            --max-turns 15

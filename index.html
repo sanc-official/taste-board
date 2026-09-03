@@ -1,0 +1,495 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>クリニックサイト テイスト確認ボード</title>
+<style>
+:root{
+  --ink:#1c1c1e; --ink2:#55565a; --ink3:#8a8b90;
+  --line:#e3e4e8; --bg:#fbfbfc; --card:#fff;
+  --accent:#0f4c81; --accent-soft:#eaf1f8;
+  --radius:14px;
+  --sans:"Hiragino Sans","Yu Gothic","Noto Sans JP",system-ui,sans-serif;
+  --mincho:"Hiragino Mincho ProN","Yu Mincho","Noto Serif JP",serif;
+  --maru:"Hiragino Maru Gothic ProN","Zen Maru Gothic",var(--sans);
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);
+  font-size:16px;line-height:1.75;letter-spacing:.01em}
+.wrap{max-width:820px;margin:0 auto;padding:0 20px 120px}
+
+header{padding:44px 0 26px;border-bottom:1px solid var(--line);margin-bottom:34px}
+h1{font-size:23px;line-height:1.45;margin:0 0 12px;letter-spacing:.02em}
+.lead{color:var(--ink2);font-size:15px;margin:0}
+.note{margin-top:18px;padding:13px 15px;background:var(--accent-soft);
+  border-radius:10px;font-size:13.5px;color:#274b6b;line-height:1.7}
+
+section{margin:0 0 44px;scroll-margin-top:20px}
+h2{font-size:12px;letter-spacing:.16em;color:var(--accent);margin:0 0 6px;font-weight:700}
+h3{font-size:19px;margin:0 0 6px;line-height:1.5;font-weight:700}
+.hint{color:var(--ink3);font-size:13.5px;margin:0 0 18px;line-height:1.7}
+
+.grid{display:grid;gap:12px}
+.g2{grid-template-columns:repeat(2,1fr)}
+.g3{grid-template-columns:repeat(3,1fr)}
+@media(max-width:600px){.g3{grid-template-columns:1fr}.g2{grid-template-columns:1fr}}
+
+label.opt{display:block;position:relative;background:var(--card);border:1.5px solid var(--line);
+  border-radius:var(--radius);padding:16px 17px;cursor:pointer;transition:.15s;height:100%}
+label.opt:hover{border-color:#c3c6cc}
+label.opt input{position:absolute;opacity:0;pointer-events:none}
+label.opt .t{font-weight:700;font-size:16px;display:block;margin-bottom:3px}
+label.opt .d{font-size:13px;color:var(--ink3);line-height:1.65;display:block}
+label.opt:has(input:checked){border-color:var(--accent);background:var(--accent-soft);
+  box-shadow:0 0 0 3px rgba(15,76,129,.09)}
+label.opt:has(input:checked) .d{color:#3d6489}
+
+.sw{display:flex;gap:0;height:34px;border-radius:7px;overflow:hidden;margin-bottom:12px;
+  border:1px solid rgba(0,0,0,.07)}
+.sw i{flex:1}
+
+.dir{background:var(--card);border:1.5px solid var(--line);border-radius:var(--radius);
+  padding:18px 18px 16px;cursor:pointer;transition:.15s;position:relative}
+.dir:hover{border-color:#c3c6cc}
+.dir input{position:absolute;opacity:0;pointer-events:none}
+.dir:has(input:checked){border-color:var(--accent);box-shadow:0 0 0 3px rgba(15,76,129,.09)}
+.dir .tag{font-size:11.5px;letter-spacing:.1em;color:var(--ink3);font-weight:700}
+.dir .nm{font-size:17px;font-weight:700;margin:2px 0 8px}
+.dir .ds{font-size:13.5px;color:var(--ink2);line-height:1.7;margin:0 0 12px}
+.dir .refs{font-size:12.5px;line-height:2;border-top:1px dashed var(--line);padding-top:10px}
+.dir .refs a{color:var(--accent);text-decoration:none;border-bottom:1px solid #cfdcea}
+.dir .refs a:hover{border-bottom-color:var(--accent)}
+.dir .refs span{color:var(--ink3)}
+
+.fs{background:var(--card);border:1.5px solid var(--line);border-radius:var(--radius);
+  padding:18px;cursor:pointer;transition:.15s;position:relative;text-align:center}
+.fs:hover{border-color:#c3c6cc}
+.fs input{position:absolute;opacity:0;pointer-events:none}
+.fs:has(input:checked){border-color:var(--accent);background:var(--accent-soft);
+  box-shadow:0 0 0 3px rgba(15,76,129,.09)}
+.fs .sample{font-size:25px;line-height:1.5;margin-bottom:6px;color:var(--ink)}
+.fs .nm2{font-size:13.5px;font-weight:700}
+.fs .d2{font-size:12px;color:var(--ink3)}
+
+.chips{display:flex;flex-wrap:wrap;gap:9px}
+label.chip{display:inline-flex;align-items:center;gap:8px;background:var(--card);
+  border:1.5px solid var(--line);border-radius:999px;padding:9px 15px 9px 11px;
+  cursor:pointer;font-size:14px;transition:.15s}
+label.chip:hover{border-color:#c3c6cc}
+label.chip input{position:absolute;opacity:0;pointer-events:none}
+label.chip .dot{width:16px;height:16px;border-radius:50%;border:1px solid rgba(0,0,0,.12);flex:none}
+label.chip:has(input:checked){border-color:var(--accent);background:var(--accent-soft);font-weight:700}
+
+textarea,input[type=text]{width:100%;font-family:var(--sans);font-size:15px;color:var(--ink);
+  background:var(--card);border:1.5px solid var(--line);border-radius:11px;padding:12px 14px;
+  line-height:1.7;resize:vertical}
+textarea:focus,input[type=text]:focus{outline:none;border-color:var(--accent);
+  box-shadow:0 0 0 3px rgba(15,76,129,.09)}
+.field{margin-bottom:14px}
+.field > .lb{display:block;font-size:14px;font-weight:700;margin-bottom:6px}
+.field > .sb{display:block;font-size:12.5px;color:var(--ink3);margin-bottom:7px;line-height:1.6}
+
+.bar{position:fixed;left:0;right:0;bottom:0;background:rgba(255,255,255,.94);
+  backdrop-filter:blur(10px);border-top:1px solid var(--line);padding:12px 20px;z-index:20}
+.bar .inner{max-width:820px;margin:0 auto;display:flex;gap:10px;align-items:center}
+.bar .st{font-size:12.5px;color:var(--ink3);flex:1;line-height:1.5}
+button{font-family:var(--sans);font-size:14.5px;font-weight:700;border-radius:10px;
+  padding:11px 18px;cursor:pointer;border:1.5px solid var(--line);background:#fff;color:var(--ink2)}
+button.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+button:hover{opacity:.88}
+@media(max-width:600px){.bar .st{display:none}.bar .inner{justify-content:stretch}
+  .bar button{flex:1}}
+
+dialog{border:none;border-radius:16px;padding:0;max-width:640px;width:calc(100% - 40px);
+  box-shadow:0 24px 70px rgba(0,0,0,.3)}
+dialog::backdrop{background:rgba(20,22,26,.5)}
+.dlg{padding:24px}
+.dlg h4{margin:0 0 4px;font-size:17px}
+.dlg p{margin:0 0 14px;font-size:13px;color:var(--ink3)}
+.dlg textarea{height:340px;font-size:12.5px;line-height:1.75;
+  font-family:ui-monospace,"SF Mono",Menlo,monospace}
+.dlg .row{display:flex;gap:10px;margin-top:14px;justify-content:flex-end}
+footer{border-top:1px solid var(--line);margin-top:50px;padding-top:22px;
+  font-size:12.5px;color:var(--ink3);line-height:1.9}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <h1>クリニックサイト<br>テイスト確認ボード</h1>
+  <p class="lead">サイトとロゴの方向を決めるための、好みのアンケートです。<br>
+  所要 5〜10分。<strong>正解はありません。「なんとなく こっち」で大丈夫です。</strong></p>
+  <div class="note">
+    入力した内容は<strong>このブラウザの中だけに保存</strong>され、外部には一切送信されません。<br>
+    最後に「回答をまとめてコピー」を押して、そのまま貼り付けて返信してください。
+  </div>
+</header>
+
+<section>
+  <h2>Q1</h2>
+  <h3>全体の印象は、どちらが近いですか</h3>
+  <p class="hint">迷ったら「まだこっちが近いかな」で選んでください。</p>
+  <div class="grid g2">
+    <label class="opt"><input type="radio" name="q_impression" value="かっちり・信頼感">
+      <span class="t">かっちり・信頼感</span>
+      <span class="d">きちんとしている。medical らしい安心感。落ち着いて見える</span></label>
+    <label class="opt"><input type="radio" name="q_impression" value="やさしい・あたたかい">
+      <span class="t">やさしい・あたたかい</span>
+      <span class="d">やわらかく親しみやすい。子ども連れでも入りやすい空気</span></label>
+  </div>
+</section>
+
+<section>
+  <h2>Q2</h2>
+  <h3>もうひとつの軸。どちらが近いですか</h3>
+  <div class="grid g2">
+    <label class="opt"><input type="radio" name="q_axis2" value="都会的でシャープ">
+      <span class="t">都会的でシャープ</span>
+      <span class="d">すっきり洗練。余白が多く、情報が主役</span></label>
+    <label class="opt"><input type="radio" name="q_axis2" value="落ち着いていて上品">
+      <span class="t">落ち着いていて上品</span>
+      <span class="d">品のある大人っぽさ。ゆったりした佇まい</span></label>
+  </div>
+</section>
+
+<section>
+  <h2>Q3</h2>
+  <h3>いちばん来てほしい患者さんは</h3>
+  <p class="hint">複数選べます。いちばん多いと思う順でなくて構いません。</p>
+  <div class="chips" id="chips_target"></div>
+</section>
+
+<section>
+  <h2>Q4</h2>
+  <h3>ベースの色は、どちらが好きですか</h3>
+  <p class="hint">サイトの「地」になる色です。面積のほとんどを占めます。</p>
+  <div class="grid g2">
+    <label class="opt"><input type="radio" name="q_base" value="白ですっきり">
+      <div class="sw"><i style="background:#ffffff"></i><i style="background:#f5f7f9"></i><i style="background:#e9edf1"></i></div>
+      <span class="t">白ですっきり</span>
+      <span class="d">清潔感が出る。医療の王道。情報が読みやすい</span></label>
+    <label class="opt"><input type="radio" name="q_base" value="ベージュ・生成りでやわらかく">
+      <div class="sw"><i style="background:#faf7f2"></i><i style="background:#f0e9df"></i><i style="background:#e3d9cb"></i></div>
+      <span class="t">ベージュ・生成りでやわらかく</span>
+      <span class="d">あたたかい。緊張しにくい。women・family 向けに強い</span></label>
+  </div>
+</section>
+
+<section>
+  <h2>Q5</h2>
+  <h3>さし色（ポイントになる色）は</h3>
+  <div class="grid g3">
+    <label class="opt"><input type="radio" name="q_accent" value="青系">
+      <div class="sw"><i style="background:#0f4c81"></i><i style="background:#2e7bb8"></i><i style="background:#a8c8e4"></i></div>
+      <span class="t">青系</span><span class="d">清潔・信頼。眼科の王道</span></label>
+    <label class="opt"><input type="radio" name="q_accent" value="緑系">
+      <div class="sw"><i style="background:#3f6b52"></i><i style="background:#6b9c7c"></i><i style="background:#c3d9c9"></i></div>
+      <span class="t">緑系</span><span class="d">自然・やさしい。目にやさしい印象</span></label>
+    <label class="opt"><input type="radio" name="q_accent" value="茶・ベージュ系">
+      <div class="sw"><i style="background:#7a5c43"></i><i style="background:#a98c6e"></i><i style="background:#ddcbb6"></i></div>
+      <span class="t">茶・ベージュ系</span><span class="d">上品・落ち着き。木の質感</span></label>
+  </div>
+</section>
+
+<section>
+  <h2>Q6</h2>
+  <h3>逆に、これは避けたいという色はありますか</h3>
+  <p class="hint">いくつでも。<strong>ここが決まると、外れた案を出さずに済みます。</strong></p>
+  <div class="chips" id="chips_ngcolor"></div>
+  <div class="field" style="margin-top:14px">
+    <textarea name="q_ngcolor_note" rows="2" placeholder="例）前の職場が◯色だったので避けたい　など（任意）"></textarea>
+  </div>
+</section>
+
+<section>
+  <h2>Q7</h2>
+  <h3>4つの方向。近いものはどれですか</h3>
+  <p class="hint">実在するサイトです。リンクを開いて雰囲気だけ見てください（1つ選択）。<br>
+  <strong>細かい中身ではなく「全体の空気感」</strong>で見ていただければ大丈夫です。</p>
+  <div class="grid g2" id="dirs"></div>
+</section>
+
+<section>
+  <h2>Q8</h2>
+  <h3>文字の感じは</h3>
+  <div class="grid g3">
+    <label class="fs"><input type="radio" name="q_font" value="明朝">
+      <div class="sample" style="font-family:var(--mincho)">目のことを、<br>ずっと。</div>
+      <div class="nm2">明朝</div><div class="d2">上品・落ち着き</div></label>
+    <label class="fs"><input type="radio" name="q_font" value="ゴシック">
+      <div class="sample" style="font-family:var(--sans)">目のことを、<br>ずっと。</div>
+      <div class="nm2">ゴシック</div><div class="d2">読みやすい・現代的</div></label>
+    <label class="fs"><input type="radio" name="q_font" value="丸ゴシック">
+      <div class="sample" style="font-family:var(--maru)">目のことを、<br>ずっと。</div>
+      <div class="nm2">丸ゴシック</div><div class="d2">やさしい・親しみ</div></label>
+  </div>
+</section>
+
+<section>
+  <h2>Q9</h2>
+  <h3>写真の使い方は</h3>
+  <div class="grid g2">
+    <label class="opt"><input type="radio" name="q_photo" value="写真をたくさん使う">
+      <span class="t">写真をたくさん使う</span>
+      <span class="d">院内・スタッフ・先生。実際の空気が伝わる。撮影が必要</span></label>
+    <label class="opt"><input type="radio" name="q_photo" value="写真は少なめ・イラストや図解を使う">
+      <span class="t">写真は少なめ・イラストや図解</span>
+      <span class="d">開院前でも作れる。説明がわかりやすい</span></label>
+  </div>
+  <div class="grid g2" style="margin-top:12px">
+    <label class="opt"><input type="radio" name="q_doctorphoto" value="院長の写真を出せる">
+      <span class="t">院長のお写真は出せる</span>
+      <span class="d">信頼感がいちばん上がる要素です</span></label>
+    <label class="opt"><input type="radio" name="q_doctorphoto" value="院長の写真は控えめにしたい">
+      <span class="t">できれば控えめにしたい</span>
+      <span class="d">後ろ姿・診察風景などで代替します</span></label>
+  </div>
+</section>
+
+<section>
+  <h2>Q10</h2>
+  <h3>動きの感じは</h3>
+  <div class="grid g2">
+    <label class="opt"><input type="radio" name="q_motion" value="ほぼ動かない静かな感じ">
+      <span class="t">ほぼ動かない、静かな感じ</span>
+      <span class="d">落ち着く。表示が速い。高齢の方にやさしい</span></label>
+    <label class="opt"><input type="radio" name="q_motion" value="さりげなく動く感じ">
+      <span class="t">さりげなく動く感じ</span>
+      <span class="d">今っぽさが出る。スクロールでふわっと現れる程度</span></label>
+  </div>
+</section>
+
+<section>
+  <h2>Q11</h2>
+  <h3>ロゴについて</h3>
+  <p class="hint">ロゴは<strong>看板・内装のサイン・名刺・診察券・求人票</strong>すべての元になります。
+  サイトより先に決めておきたい部分です。</p>
+  <div class="grid g2">
+    <label class="opt"><input type="radio" name="q_logo_type" value="シンボルマーク＋文字">
+      <span class="t">シンボルマーク ＋ 文字</span>
+      <span class="d">看板やSNSのアイコンで使いやすい</span></label>
+    <label class="opt"><input type="radio" name="q_logo_type" value="文字だけ（ロゴタイプ）">
+      <span class="t">文字だけ（ロゴタイプ）</span>
+      <span class="d">すっきり洗練。名前が読まれやすい</span></label>
+  </div>
+  <div class="grid g2" style="margin-top:12px">
+    <label class="opt"><input type="radio" name="q_logo_eye" value="目のモチーフを使いたい">
+      <span class="t">目のモチーフを使いたい</span>
+      <span class="d">ひと目で眼科とわかる。ただし他院と似やすい</span></label>
+    <label class="opt"><input type="radio" name="q_logo_eye" value="目のモチーフは避けたい">
+      <span class="t">目のモチーフは避けたい</span>
+      <span class="d">被らない。抽象的な形や頭文字で作ります</span></label>
+  </div>
+  <div class="field" style="margin-top:14px">
+    <span class="lb">すでにご運営のクリニックのロゴとの関係</span>
+    <div class="chips" id="chips_logorel"></div>
+  </div>
+</section>
+
+<section>
+  <h2>Q12</h2>
+  <h3>医院名について</h3>
+  <p class="hint"><strong>まだ決まっていなくて大丈夫です。</strong>
+  ロゴはここが決まってから動くので、状況だけ教えてください。</p>
+  <div class="chips" id="chips_namestatus"></div>
+  <div class="field" style="margin-top:16px">
+    <span class="lb">候補があれば（いくつでも）</span>
+    <span class="sb">思いつきレベルで構いません。ボツ案も方向を知る手がかりになります。</span>
+    <textarea name="q_name_ideas" rows="3" placeholder="例）◯◯眼科クリニック / ◯◯アイクリニック …"></textarea>
+  </div>
+  <div class="field">
+    <span class="lb">名前に入れたい言葉・込めたい意味</span>
+    <textarea name="q_name_wish" rows="2" placeholder="例）地名を入れたい／ひらがなにしたい／「アイ」を使いたい　など"></textarea>
+  </div>
+  <div class="field">
+    <span class="lb">これは避けたい、という名前の方向</span>
+    <textarea name="q_name_ng" rows="2" placeholder="例）カタカナだけは避けたい／近隣に似た名前がある　など"></textarea>
+  </div>
+  <div class="field">
+    <span class="lb">医院名を決められそうな時期</span>
+    <span class="sb">ロゴ・看板・内装サインの逆算に使います。ざっくりで結構です。</span>
+    <input type="text" name="q_name_deadline" placeholder="例）10月中／内装の打合せまでに">
+  </div>
+</section>
+
+<section>
+  <h2>Q13</h2>
+  <h3>自由記入</h3>
+  <div class="field">
+    <span class="lb">見ていて「いいな」と思ったサイト</span>
+    <span class="sb">医療でなくて構いません。ホテル・美容室・車・お店…なんでも。URLでも名前でも。</span>
+    <textarea name="q_like_sites" rows="3" placeholder=""></textarea>
+  </div>
+  <div class="field">
+    <span class="lb">逆に「これは古い・苦手」と思う感じ</span>
+    <textarea name="q_dislike" rows="2" placeholder="例）文字が詰まっている／色が多い　など"></textarea>
+  </div>
+  <div class="field">
+    <span class="lb">その他、伝えておきたいこと</span>
+    <textarea name="q_free" rows="3" placeholder=""></textarea>
+  </div>
+</section>
+
+<footer>
+  入力内容はこのブラウザにのみ保存されます（外部送信なし）。<br>
+  端末を変えると内容は引き継がれません。<br>
+  制作：SaNC
+</footer>
+</div>
+
+<div class="bar">
+  <div class="inner">
+    <div class="st" id="status">自動保存されています</div>
+    <button type="button" id="btnReset">クリア</button>
+    <button type="button" class="primary" id="btnCopy">回答をまとめてコピー</button>
+  </div>
+</div>
+
+<dialog id="dlg">
+  <div class="dlg">
+    <h4>回答のまとめ</h4>
+    <p>下のテキストをコピーして、そのまま返信に貼り付けてください。</p>
+    <textarea id="out" readonly></textarea>
+    <div class="row">
+      <button type="button" id="btnClose">閉じる</button>
+      <button type="button" class="primary" id="btnCopy2">コピーする</button>
+    </div>
+  </div>
+</dialog>
+
+<script>
+const KEY = 'sanc_taste_board_v1';
+
+const TARGETS = ['近所のファミリー','お子さんの近視が心配な親御さん','40〜60代の検診世代',
+  'ご高齢の方','コンタクトレンズの若い層','働く世代（平日夜・土曜）'];
+const NGCOLORS = [['ピンク','#e79ab5'],['赤','#c8443c'],['紫','#7c5ea8'],['黄','#e8c341'],
+  ['オレンジ','#e08a3c'],['黒が多い','#2b2b2e'],['原色っぽい','#1f6feb'],['特にない','#dcdde1']];
+const LOGOREL = ['雰囲気を揃えたい','まったく別物にしたい','既存のロゴはない','まだ決めていない'];
+const NAMESTATUS = ['もう決まっている','候補がいくつかある','これから考える（一緒に考えたい）','まだ何も浮かんでいない'];
+
+const DIRS = [
+  {k:'A', nm:'清潔・信頼', ds:'白と青。医療らしい安心感。情報が読みやすく、どの年代にも通じる。',
+   sw:['#ffffff','#eaf1f8','#2e7bb8','#0f4c81'],
+   refs:[['表参道高柳矯正歯科','https://mikke.scale-group.co.jp/site/jortho/'],
+         ['三気堂薬局','https://mikke.scale-group.co.jp/site/sankido-pharmacy/'],
+         ['Vivoo','https://mikke.scale-group.co.jp/site/vivoo/']]},
+  {k:'B', nm:'やさしい・ナチュラル', ds:'ベージュと緑。あたたかく親しみやすい。お子さん連れやご家族に強い。',
+   sw:['#faf7f2','#eae3d6','#8fae96','#3f6b52'],
+   refs:[['Yard Dental Clinic','https://mikke.scale-group.co.jp/site/yard-dental/'],
+         ['やいづ原崎矯正歯科','https://mikke.scale-group.co.jp/site/yaizuortho/'],
+         ['げんきの家在宅クリニック','https://mikke.scale-group.co.jp/site/genki-zaitaku-clinic/']]},
+  {k:'C', nm:'上品・きれいめ', ds:'ベージュと茶、明朝。落ち着いた大人の佇まい。ゆったりとした余白。',
+   sw:['#f8f4ee','#e6d9c8','#a98c6e','#5d4632'],
+   refs:[['KAUNIS CLINIC','https://mikke.scale-group.co.jp/site/kaunis-clinic/'],
+         ['矯正歯科egao','https://mikke.scale-group.co.jp/site/egao-kyousei/']]},
+  {k:'D', nm:'ミニマル・洗練', ds:'グレーと白。静かで都会的。写真より情報と余白が主役になる。',
+   sw:['#ffffff','#f2f3f5','#c9cbd0','#3a3c40'],
+   refs:[['こばクリニック','https://mikke.scale-group.co.jp/site/kobaclinic/'],
+         ['池田模範堂 採用','https://mikke.scale-group.co.jp/site/ikedamohando/']]}
+];
+
+function esc(s){return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
+
+function chips(id, name, items, type){
+  const el = document.getElementById(id); if(!el) return;
+  el.innerHTML = items.map(it=>{
+    const [label, color] = Array.isArray(it) ? it : [it, null];
+    return `<label class="chip"><input type="${type}" name="${name}" value="${esc(label)}">`
+      + (color?`<span class="dot" style="background:${color}"></span>`:'')
+      + `<span>${esc(label)}</span></label>`;
+  }).join('');
+}
+chips('chips_target','q_target',TARGETS,'checkbox');
+chips('chips_ngcolor','q_ngcolor',NGCOLORS,'checkbox');
+chips('chips_logorel','q_logo_rel',LOGOREL,'radio');
+chips('chips_namestatus','q_name_status',NAMESTATUS,'radio');
+
+document.getElementById('dirs').innerHTML = DIRS.map(d=>`
+  <label class="dir"><input type="radio" name="q_direction" value="${d.k} ${esc(d.nm)}">
+    <div class="sw">${d.sw.map(c=>`<i style="background:${c}"></i>`).join('')}</div>
+    <div class="tag">方向 ${d.k}</div>
+    <div class="nm">${esc(d.nm)}</div>
+    <p class="ds">${esc(d.ds)}</p>
+    <div class="refs">${d.refs.map(r=>
+      `<a href="${r[1]}" target="_blank" rel="noopener">${esc(r[0])}</a>`).join('<span> ／ </span>')}
+    </div>
+  </label>`).join('');
+
+const form = document.body;
+function collect(){
+  const o = {};
+  form.querySelectorAll('input[type=radio]:checked, input[type=text], textarea').forEach(el=>{
+    if(el.value !== '') o[el.name] = el.value;
+  });
+  form.querySelectorAll('input[type=checkbox]:checked').forEach(el=>{
+    (o[el.name] = o[el.name] || []).push(el.value);
+  });
+  return o;
+}
+function save(){
+  try{ localStorage.setItem(KEY, JSON.stringify(collect())); }catch(e){}
+  const s = document.getElementById('status');
+  s.textContent = '保存しました　' + new Date().toLocaleTimeString('ja-JP');
+}
+function restore(){
+  let o; try{ o = JSON.parse(localStorage.getItem(KEY) || '{}'); }catch(e){ return; }
+  Object.entries(o).forEach(([k,v])=>{
+    const vals = Array.isArray(v) ? v : [v];
+    form.querySelectorAll(`[name="${CSS.escape(k)}"]`).forEach(el=>{
+      if(el.type === 'radio' || el.type === 'checkbox'){ if(vals.includes(el.value)) el.checked = true; }
+      else el.value = v;
+    });
+  });
+}
+restore();
+form.addEventListener('input', save);
+form.addEventListener('change', save);
+
+const LABELS = {
+  q_impression:'全体の印象', q_axis2:'もうひとつの軸', q_target:'来てほしい患者さん',
+  q_base:'ベースの色', q_accent:'さし色', q_ngcolor:'避けたい色', q_ngcolor_note:'避けたい色（補足）',
+  q_direction:'近い方向', q_font:'文字の感じ', q_photo:'写真の使い方',
+  q_doctorphoto:'院長のお写真', q_motion:'動き',
+  q_logo_type:'ロゴの形', q_logo_eye:'目のモチーフ', q_logo_rel:'既存ロゴとの関係',
+  q_name_status:'医院名の状況', q_name_ideas:'医院名の候補', q_name_wish:'名前に込めたい意味',
+  q_name_ng:'避けたい名前の方向', q_name_deadline:'医院名を決められそうな時期',
+  q_like_sites:'いいなと思ったサイト', q_dislike:'苦手な感じ', q_free:'その他'
+};
+function buildText(){
+  const o = collect();
+  const lines = ['【テイスト確認ボード 回答】', '記入日：' + new Date().toLocaleDateString('ja-JP'), ''];
+  Object.keys(LABELS).forEach(k=>{
+    if(!(k in o)) return;
+    const v = Array.isArray(o[k]) ? o[k].join('、') : o[k];
+    lines.push('■ ' + LABELS[k]);
+    lines.push(String(v).split('\n').map(x=>'　' + x).join('\n'));
+    lines.push('');
+  });
+  if(lines.length <= 3) lines.push('（まだ入力がありません）');
+  return lines.join('\n');
+}
+const dlg = document.getElementById('dlg');
+document.getElementById('btnCopy').onclick = ()=>{
+  document.getElementById('out').value = buildText();
+  dlg.showModal();
+};
+document.getElementById('btnClose').onclick = ()=> dlg.close();
+document.getElementById('btnCopy2').onclick = async ()=>{
+  const ta = document.getElementById('out');
+  try{ await navigator.clipboard.writeText(ta.value); }
+  catch(e){ ta.select(); document.execCommand('copy'); }
+  const b = document.getElementById('btnCopy2');
+  b.textContent = 'コピーしました'; setTimeout(()=>{ b.textContent = 'コピーする'; }, 1800);
+};
+document.getElementById('btnReset').onclick = ()=>{
+  if(!confirm('入力した内容をすべて消します。よろしいですか？')) return;
+  try{ localStorage.removeItem(KEY); }catch(e){}
+  location.reload();
+};
+</script>
+</body>
+</html>
